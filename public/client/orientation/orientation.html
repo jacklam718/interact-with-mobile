@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orientation</title>
+  </head>
+  <body>
+    <h1>Orientation</h1>
+
+    <script>
+
+      var ws = new WebSocket('ws://' + location.hostname + ':8001');
+      var isConnect = false;
+
+      ws.onopen = function () {
+        isConnect = true;
+      };
+
+      ws.onclose = function () {
+        isConnect = false;
+      }
+
+      window.addEventListener('deviceorientation', function (e) {
+        if (! isConnect) return;
+
+        ws.send(JSON.stringify({
+          type: 'deviceorientation',
+          alpha: event.alpha,
+          beta: event.beta,
+          gamma: event.gamma
+        }));
+      });
+
+      window.addEventListener('devicemotion', function (e) {
+        if (! isConnect) return;
+
+        ws.send(JSON.stringify({
+          type: 'devicemotion',
+          x: e.accelerationIncludingGravity.x,
+          y: e.accelerationIncludingGravity.y,
+          z: e.accelerationIncludingGravity.z
+        }));
+      });
+
+      window.addEventListener('devicelight', function (e) {
+        if (! isConnect) return;
+
+        ws.send(JSON.stringify({
+          type: 'devicelight',
+          value: e.value
+        }));
+      });
+    </script>
+  </body>
+</html>
