@@ -10,9 +10,9 @@ var PORT = process.env.PORT || 8000,
     server;
 
 app = express();
-server = http.createServer(app);
+
 // http server
-server.listen(PORT);
+server = app.listen(PORT);
 // websocket server
 websockServer = new ws({'server': server});
 
@@ -40,7 +40,6 @@ app.use('/client', function(req, res, next) {
   }
 });
 
-
 app.use('/server', function(req, res, next) {
   var url = /[a-z]+/.exec(req.url)[0];
 
@@ -55,9 +54,8 @@ websockServer.on('connection', function(ws) {
   console.log('new connection');
 
   ws.on('message', function (str) {
-    console.log('Received ' + str);
+    if (! process.env.PRODUCTION) console.log('Received ' + str);
     broadcast(str);
-
   });
 
   ws.on('close', function(code, reason) {
