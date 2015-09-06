@@ -4,13 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Orientation</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .orientation-headline {
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <h1>Orientation</h1>
+    <h1 class="orientation-headline">Orientation</h1>
 
     <script>
-
-      var ws = new WebSocket('ws://' + location.hostname + ':8001');
+      var proto = window.location.protocol === 'http:' ? 'ws' : 'wss';
+      var ws = new WebSocket(proto + '://' + location.hostname + ':8001');
       var isConnect = false;
 
       ws.onopen = function () {

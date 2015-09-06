@@ -5,7 +5,7 @@ var path = require('path');
 
 var app = express();
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 8000;
 
 // set static files
 app.use(serveStatic(__dirname + '/'));
