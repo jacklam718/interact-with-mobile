@@ -1,6 +1,6 @@
 var serveStatic = require('serve-static');
 var express = require('express');
-var ws = require('nodejs-websocket');
+var ws = require('ws');
 var path = require('path');
 
 var PORT = process.env.PORT || 8000,
@@ -49,7 +49,7 @@ app.use('/server', function(req, res, next) {
 });
 
 // websocket server
-var websockServer = ws.createServer({'httpServer': server}, function(conn) {
+var websockServer = new ws.createServer({'httpServer': server, 'port': SOCK_PORT}, function(conn) {
   console.log('new connection');
   conn.on('text', function (str) {
     console.log('Received ' + str);
@@ -61,7 +61,7 @@ var websockServer = ws.createServer({'httpServer': server}, function(conn) {
   });
 });
 
-websockServer.listen(SOCK_PORT);
+// websockServer.listen(SOCK_PORT);
 
 function broadcast(msg) {
   websockServer.connections.forEach(function(conn) {
