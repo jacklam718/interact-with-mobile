@@ -5,6 +5,8 @@ var path = require('path');
 
 var app = express();
 
+var PORT = process.env.PORT || 3000;
+
 // set static files
 app.use(serveStatic(__dirname + '/'));
 app.use(serveStatic(__dirname + '/vendor'));
@@ -59,8 +61,8 @@ function broadcast(msg) {
 }
 
 // express
-app.listen(8000, '0.0.0.0');
+app.listen(PORT);
 // websocket
-server.listen(8001, '0.0.0.0');
+server.listen(8001);
 
-console.log('Start listen: 8000/8001');
+console.log('Start listen: ' + PORT + '/8001');
