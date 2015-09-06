@@ -63,6 +63,6 @@ function broadcast(msg) {
 // express
 app.listen(PORT);
 // websocket
-server.listen(8001);
+server.listen(8443);
 
-console.log('Start listen: ' + PORT + '/8001');
+console.log('Start listen: ' + PORT + '/8443');
