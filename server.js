@@ -4,6 +4,7 @@ var ws = require('nodejs-websocket');
 var path = require('path');
 
 var PORT = process.env.PORT || 8000,
+    SOCK_PORT = process.env.SOCK_PORT || 8001,
     app,
     server,
     websockServer;
@@ -48,7 +49,7 @@ app.use('/server', function(req, res, next) {
 });
 
 // websocket server
-var websockServer = ws.createServer(function(conn) {
+var websockServer = ws.createServer({'httpServer': server}, function(conn) {
   console.log('new connection');
   conn.on('text', function (str) {
     console.log('Received ' + str);
@@ -60,15 +61,12 @@ var websockServer = ws.createServer(function(conn) {
   });
 });
 
-// secure
-server.listen(8443);
-// insecure
-server.listen(8001);
+websockServer.listen(SOCK_PORT);
 
 function broadcast(msg) {
-  server.connections.forEach(function(conn) {
+  websockServer.connections.forEach(function(conn) {
     conn.sendText(msg);
   });
 };
 
-console.log('Start listen: ' + PORT + '/' + 8443 + ' & ' + 8001 );
+console.log('Start listen; ' + 'http server port: ' + PORT + ', ' + 'websocket server port: ' + SOCK_PORT );
