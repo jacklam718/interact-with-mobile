@@ -1,14 +1,20 @@
 <html>
   <head>
-    <title>Orientation</title>
-  </head>
-  <body>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <script src="../lib/three.js"></script>
+    <title>Orientation</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="/vendor/three.js"></script>
     <script>
-      var ws = new WebSocket('ws://' + location.hostname + ':8443');
+      var proto = window.location.protocol === 'http:' ? 'ws' : 'wss';
+      var port = window.location.protocol === 'http:' ? '8001' : '8443';
+      var ws = new WebSocket(proto + '://' + location.hostname + ':' + port);
 
       var alpha = 0.5;
       var beta = 0.5;

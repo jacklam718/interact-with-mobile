@@ -3,9 +3,14 @@ var express = require('express');
 var ws = require('nodejs-websocket');
 var path = require('path');
 
-var app = express();
+var PORT = process.env.PORT || 8000,
+    app,
+    server,
+    websockServer;
 
-var PORT = process.env.PORT || 3000;
+app = express();
+// http server
+server = app.listen(PORT);
 
 // set static files
 app.use(serveStatic(__dirname + '/'));
@@ -40,9 +45,10 @@ app.use('/server', function(req, res, next) {
       res.sendFile(path.join(__dirname, 'public/server/orientation/orientation.html'));
       break;
   }
-})
+});
 
-var server = ws.createServer(function(conn) {
+// websocket server
+var websockServer = ws.createServer(function(conn) {
   console.log('new connection');
   conn.on('text', function (str) {
     console.log('Received ' + str);
@@ -52,17 +58,17 @@ var server = ws.createServer(function(conn) {
   conn.on('close', function(code, reason) {
     console.log('Connection closed');
   });
-})
+});
+
+// secure
+server.listen(8443);
+// insecure
+server.listen(8001);
 
 function broadcast(msg) {
   server.connections.forEach(function(conn) {
     conn.sendText(msg);
   });
-}
+};
 
-// express
-app.listen(PORT);
-// websocket
-server.listen(8443);
-
-console.log('Start listen: ' + PORT + '/8443');
+console.log('Start listen: ' + PORT + '/' + 8443 + ' & ' + 8001 );
