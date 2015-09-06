@@ -1,17 +1,20 @@
 var serveStatic = require('serve-static');
+var http = require('http');
 var express = require('express');
-var ws = require('ws');
+var ws = require('ws').Server;
 var path = require('path');
 
 var PORT = process.env.PORT || 8000,
     SOCK_PORT = process.env.SOCK_PORT || 8001,
     app,
-    server,
-    websockServer;
+    server;
 
 app = express();
+server = http.createServer(app);
 // http server
-server = app.listen(PORT);
+server.listen(PORT);
+// websocket server
+websockServer = new ws({'server': server});
 
 // set static files
 app.use(serveStatic(__dirname + '/'));
@@ -48,25 +51,24 @@ app.use('/server', function(req, res, next) {
   }
 });
 
-// websocket server
-var websockServer = new ws.createServer({'httpServer': server, 'port': SOCK_PORT}, function(conn) {
+websockServer.on('connection', function(ws) {
   console.log('new connection');
-  conn.on('text', function (str) {
+
+  ws.on('message', function (str) {
     console.log('Received ' + str);
     broadcast(str);
+
   });
 
-  conn.on('close', function(code, reason) {
+  ws.on('close', function(code, reason) {
     console.log('Connection closed');
   });
+
+  function broadcast(msg) {
+    websockServer.clients.forEach(function(conn) {
+      conn.send(msg);
+    });
+  };
 });
 
-// websockServer.listen(SOCK_PORT);
-
-function broadcast(msg) {
-  websockServer.connections.forEach(function(conn) {
-    conn.sendText(msg);
-  });
-};
-
-console.log('Start listen; ' + 'http server port: ' + PORT + ', ' + 'websocket server port: ' + SOCK_PORT );
+console.log('Start listen; ' + 'http server port: ' + PORT + ', ' + 'websocket server port: ' + PORT );
