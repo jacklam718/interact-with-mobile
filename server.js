@@ -1,5 +1,7 @@
+var fs = require('fs');
 var serveStatic = require('serve-static');
 var http = require('http');
+var https = require('https');
 var express = require('express');
 var ws = require('ws').Server;
 var path = require('path');
@@ -12,7 +14,12 @@ var PORT = process.env.PORT || 8000,
 app = express();
 
 // http server
-server = app.listen(PORT);
+server = https.createServer({
+  key: fs.readFileSync('./server.key', 'utf8'),
+  cert: fs.readFileSync('./server.cert', 'utf8'),
+}, app)
+.listen(PORT);
+
 // websocket server
 websockServer = new ws({'server': server});
 

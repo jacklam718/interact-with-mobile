@@ -17,7 +17,31 @@
   <body>
     <h1 class="orientation-headline">Orientation</h1>
 
+    <span id="xAxis">x: </span>
+    <br />
+    <span id="yAxis">y: </span>
+    <br />
+    <span id="zAxis">z: </span>
+    
+    <br /><br />
+
+    <span id="alpha">alpha: </span>
+    <br />
+    <span id="beta">beta: </span>
+    <br />
+    <span id="gamma">gamma: </span>
+
     <script>
+      // labels
+      var xAxisLabel = document.getElementById('xAxis');
+      var yAxisLabel = document.getElementById('yAxis');
+      var zAxisLabel = document.getElementById('zAxis');
+
+      var alphaLabel = document.getElementById('alpha');
+      var betaLabel = document.getElementById('beta');
+      var gammaLabel = document.getElementById('gamma');
+
+      // setup websocket
       var host = location.origin.replace(/^http/, 'ws')
       var ws = new WebSocket(host);
 
@@ -31,6 +55,7 @@
         isConnect = false;
       }
 
+      // event handlers
       window.addEventListener('deviceorientation', function (e) {
         if (! isConnect) return;
 
@@ -40,6 +65,10 @@
           beta: event.beta,
           gamma: event.gamma
         }));
+
+        alphaLabel.innerHTML = `alpha: ${event.alpha}`
+        betaLabel.innerHTML = `beta: ${event.beta}`
+        gammaLabel.innerHTML = `gamma: ${event.gamma}`
       });
 
       window.addEventListener('devicemotion', function (e) {
@@ -51,6 +80,10 @@
           y: e.accelerationIncludingGravity.y,
           z: e.accelerationIncludingGravity.z
         }));
+
+        xAxisLabel.innerHTML = `x: ${e.accelerationIncludingGravity.x}`;
+        yAxisLabel.innerHTML = `y: ${e.accelerationIncludingGravity.y}`;
+        zAxisLabel.innerHTML = `z: ${e.accelerationIncludingGravity.z}`;
       });
 
       window.addEventListener('devicelight', function (e) {
